@@ -1,0 +1,50 @@
+[tools]
+actionlint = "latest"
+zizmor = "latest"
+
+[tasks.audit]
+# Extras, deep, thorough checks. Should be run locally.
+hide = true
+description = "Exhaustive quality check"
+depends = ["check", "audit:*"]
+
+[tasks.fix]
+# Apply automatic fixes, then check.
+# Intended for use before commit or push.
+description = "Fix before check"
+depends = ["fmt", "check"]
+
+[tasks.check]
+# Quality check. Primarily used in CI.
+hide = true
+description = "Quality check"
+depends = "lint"
+
+[tasks.lint]
+hide = true
+description = "Lint"
+depends = "build"
+
+[tasks.fmt]
+hide = true
+description = "Format"
+
+[tasks.dev]
+description = "Develop"
+run = "yaak plugin dev"
+
+[tasks.build]
+description = "Build"
+run = "yaak plugin build"
+
+[tasks.publish]
+confirm = 'Ready to ship?'
+description = "Publish"
+depends = "check"
+run = "yaak plugin publish"
+
+[tasks."audit:extras"]
+hide = true
+interactive = true
+description = "Dependency analysis"
+run = ["pnpx actions-up", "actionlint", "zizmor .github/workflows/*"]
